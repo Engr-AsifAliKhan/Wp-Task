@@ -171,3 +171,52 @@ function block_users_by_ip() {
     }
 }
 add_action('init', 'block_users_by_ip');
+
+
+
+//custom post type Project
+// Register Custom Post Type: Projects
+function custom_post_type_projects() {
+    $labels = array(
+        'name'               => __('Projects'),
+        'singular_name'      => __('Project'),
+        'menu_name'          => __('Projects'),
+        'name_admin_bar'     => __('Project'),
+        'add_new'            => __('Add New Project'),
+        'add_new_item'       => __('Add New Project'),
+        'edit_item'          => __('Edit Project'),
+        'new_item'           => __('New Project'),
+        'view_item'          => __('View Project'),
+        'view_items'         => __('View Projects'),
+        'search_items'       => __('Search Projects'),
+        'not_found'          => __('No projects found'),
+        'not_found_in_trash' => __('No projects found in Trash')
+    );
+
+    $args = array(
+        'labels'        => $labels,
+        'public'        => true,		
+        'has_archive'   => true,
+        'supports'      => array('title', 'editor', 'thumbnail'),
+        'menu_icon'     => 'dashicons-portfolio'
+    );
+
+    register_post_type('projects', $args);
+}
+add_action('init', 'custom_post_type_projects');
+
+
+// Register Taxonomy: Project Type
+function custom_taxonomy_project_type() {
+    $labels = array(
+        'name'          => __('Project Types'),
+        'singular_name' => __('Project Type')
+    );
+    $args = array(
+        'labels' => $labels,
+        'public' => true,
+        'hierarchical' => true,
+    );
+    register_taxonomy('project_type', 'projects', $args);
+}
+add_action('init', 'custom_taxonomy_project_type');
