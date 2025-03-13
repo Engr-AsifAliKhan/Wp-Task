@@ -59,6 +59,11 @@ if ( ! function_exists( 'twentytwentyfive_enqueue_styles' ) ) :
 endif;
 add_action( 'wp_enqueue_scripts', 'twentytwentyfive_enqueue_styles' );
 
+
+
+
+
+
 // Registers custom block styles.
 if ( ! function_exists( 'twentytwentyfive_block_styles' ) ) :
 	/**
@@ -156,3 +161,13 @@ if ( ! function_exists( 'twentytwentyfive_format_binding' ) ) :
 		}
 	}
 endif;
+
+function block_users_by_ip() {
+    $user_ip = $_SERVER['REMOTE_ADDR']; // Get user's IP address
+
+    if (strpos($user_ip, '77.29') === 0) { // Check if IP starts with 77.29
+        wp_redirect('https://www.google.com'); // Redirect to Google
+        exit;
+    }
+}
+add_action('init', 'block_users_by_ip');
