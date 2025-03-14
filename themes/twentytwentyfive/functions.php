@@ -162,6 +162,13 @@ if ( ! function_exists( 'twentytwentyfive_format_binding' ) ) :
 	}
 endif;
 
+
+
+
+//Added by Asif Ali Khan for the task
+
+
+//Block users by IP
 function block_users_by_ip() {
     $user_ip = $_SERVER['REMOTE_ADDR']; // Get user's IP address
 
@@ -223,7 +230,7 @@ function custom_taxonomy_project_type() {
 add_action('init', 'custom_taxonomy_project_type');
 
 
-// In functions.php
+// Modify projects query
 function modify_projects_query($query) {
     if (!is_admin() && $query->is_main_query() && is_post_type_archive('projects')) {
         $query->set('posts_per_page', 6); 
@@ -236,3 +243,88 @@ function modify_projects_query($query) {
 add_action('pre_get_posts', 'modify_projects_query');
 
 
+// Fetch architecture projects
+function fetch_architecture_projects() {
+    // Get the number of projects to return based on login status
+    $post_count = is_user_logged_in() ? 6 : 3;
+
+    $query = new WP_Query([
+        'post_type'      => 'projects',
+        'posts_per_page' => $post_count,
+        'tax_query'      => [
+            [
+                'taxonomy' => 'project_type',
+                'field'    => 'slug',
+                'terms'    => 'architecture',
+            ],
+        ],
+    ]);
+
+    $projects = [];
+
+    if ($query->have_posts()) {
+        while ($query->have_posts()) {
+            $query->the_post();
+            $projects[] = [
+                'id'    => get_the_ID(),
+                'title' => get_the_title(),
+                'link'  => get_permalink(),
+            ];
+        }
+        wp_reset_postdata();
+    }
+
+    // Return response
+    wp_send_json([
+        'success' => true,
+        'data'    => $projects,
+    ]);
+}
+
+// Register AJAX actions for logged-in and guest users
+add_action('wp_ajax_fetch_architecture_projects', 'fetch_architecture_projects');
+add_action('wp_ajax_nopriv_fetch_architecture_projects', 'fetch_architecture_projects');
+
+
+function hs_give_me_coffee() {
+    $api_url = 'https://coffee.alexflipnote.dev/random.json';
+    
+    $response = wp_remote_get($api_url);
+
+    if (is_wp_error($response)) {
+        return 'Error fetching coffee image';
+    }
+
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body, true);
+
+    if (!isset($data['file'])) {
+        return 'No coffee image found';
+    }
+
+    return esc_url($data['file']);
+}
+
+
+// Fetch Kanye quotes
+function hs_get_kanye_quotes() {
+    $quotes = [];
+    
+    // Fetch 5 quotes using the Kanye API
+    for ($i = 0; $i < 5; $i++) {
+        $response = wp_remote_get('https://api.kanye.rest/');
+
+        if (is_wp_error($response)) {
+            return ['Error fetching quotes'];
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $data = json_decode($body, true);
+
+        if (isset($data['quote'])) {
+            $quotes[] = esc_html($data['quote']);
+        }
+    }
+
+    return $quotes;
+}
