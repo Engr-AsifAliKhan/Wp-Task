@@ -197,6 +197,7 @@ function custom_post_type_projects() {
         'labels'        => $labels,
         'public'        => true,		
         'has_archive'   => true,
+		'rewrite' 		=> array( 'slug' => 'projects' ),
         'supports'      => array('title', 'editor', 'thumbnail'),
         'menu_icon'     => 'dashicons-portfolio'
     );
@@ -220,3 +221,18 @@ function custom_taxonomy_project_type() {
     register_taxonomy('project_type', 'projects', $args);
 }
 add_action('init', 'custom_taxonomy_project_type');
+
+
+// In functions.php
+function modify_projects_query($query) {
+    if (!is_admin() && $query->is_main_query() && is_post_type_archive('projects')) {
+        $query->set('posts_per_page', 6); 
+
+        if (!$query->get('paged')) {
+            $query->set('paged', get_query_var('paged') ? get_query_var('paged') : 1);
+        }
+    }
+}
+add_action('pre_get_posts', 'modify_projects_query');
+
+
