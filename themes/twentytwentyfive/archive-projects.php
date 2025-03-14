@@ -48,16 +48,6 @@ get_header();
     <p><strong>Instructions to test:</strong></p>
     <ol>
         <li>Click the "Fetch Architecture Projects" button.</li>
-        <li>Open your browser's Developer Console:
-            <ul>
-                <li>Windows: Press <code>Ctrl + Shift + I</code> or <code>F12</code></li>
-                <li>Mac: Press <code>Cmd + Option + I</code></li>
-            </ul>
-        </li>
-        <li>Go to the "Console" tab to see the fetched data.</li>
-        <li>Run this code in the console: <code>fetch('http://localhost/ikonic/wp-admin/admin-ajax.php?action=fetch_architecture_projects')
-  .then(response => response.json())
-  .then(data => console.log(data));</code> make sure to change the ikoic URL in the code to your local WordPress site URL.</li>
     </ol>
     <button id="fetch-projects">Fetch Architecture Projects</button>
     <div id="ajax-results"></div>
